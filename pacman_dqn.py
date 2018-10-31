@@ -119,7 +119,7 @@ def epsilon_greedy(q_values, step):
         return np.argmax(q_values) # optimal action
 
 
-n_steps = 4000000  # total number of training steps
+n_steps = 4000000  # total number of training steps init=4000000
 training_start = 10000  # start training after 10,000 game iterations
 training_interval = 4  # run a training step every 4 game iterations
 save_steps = 1000  # save the model every 1,000 training steps
