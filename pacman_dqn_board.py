@@ -75,7 +75,7 @@ with tf.variable_scope("train"):
         training_op = optimizer.minimize(loss, global_step=global_step)
 
 init = tf.global_variables_initializer()
-#saver = tf.train.Saver()
+saver = tf.train.Saver()
 
 
 class ReplayMemory:
@@ -130,7 +130,7 @@ discount_rate = 0.99
 skip_start = 90  # Skip the start of every game (it's just waiting time).
 batch_size = 50
 iteration = 0  # game iterations
-checkpoint_path = "./models/my_dqn.ckpt"
+checkpoint_path = "./models_of_board/my_dqn.ckpt"
 done = True # env needs to be reset
 
 loss_val = np.infty
@@ -144,11 +144,11 @@ if __name__ == '__main__':
     if tf.gfile.Exists('./logdir'):
         tf.gfile.DeleteRecursively('./logdir')
     writer = tf.summary.FileWriter('./logdir', sess.graph)
-    #if os.path.isfile(checkpoint_path + ".index"):
-        #saver.restore(sess, checkpoint_path)
-    #else:
-    init.run()
-    copy_online_to_target.run()
+    if os.path.isfile(checkpoint_path + ".index"):
+        saver.restore(sess, checkpoint_path)
+    else:
+        init.run()
+        copy_online_to_target.run()
     while True:
         step = global_step.eval()
         if step >= n_steps:
@@ -168,6 +168,7 @@ if __name__ == '__main__':
 
         # Online DQN plays
         obs, reward, done, info = env.step(action)
+        print(reward)
         next_state = preprocess_observation(obs)
 
         # Let's memorize what happened
@@ -202,5 +203,5 @@ if __name__ == '__main__':
             copy_online_to_target.run()
 
         # And save regularly
-        #if step % save_steps == 0:
-            #saver.save(sess, checkpoint_path)
+        if step % save_steps == 0:
+            saver.save(sess, checkpoint_path)

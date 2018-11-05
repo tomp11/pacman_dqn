@@ -1,4 +1,5 @@
 models
+models_of_board
 logdir
 __pycache__
 *.pyc
