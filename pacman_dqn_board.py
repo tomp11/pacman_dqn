@@ -122,10 +122,12 @@ def epsilon_greedy(q_values, step):
 
 
 n_steps = 4000000  # total number of training steps init=4000000
-training_start = 10000  # start training after 10,000 game iterations
+training_start = 2000  # start training after 10,000 game iterations
 training_interval = 4  # run a training step every 4 game iterations
 save_steps = 1000  # save the model every 1,000 training steps
 copy_steps = 10000  # copy online DQN to target DQN every 10,000 training steps
+metadata_steps = 500
+
 discount_rate = 0.99
 skip_start = 90  # Skip the start of every game (it's just waiting time).
 batch_size = 50
@@ -139,11 +141,34 @@ total_max_q = 0
 mean_max_q = 0.0
 
 
+"""
+run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+run_metadata = tf.RunMetadata()
+
+summary, _ = sess.run([merged, train_step],
+                      feed_dict={x: ..., y: ...},
+                      options=run_options,
+                      run_metadata=run_metadata)
+
+train_writer.add_run_metadata(run_metadata, 'step%03d' % i)
+train_writer.add_summary(summary, i)
+"""
+
+#tf.summary.scalar('loss', loss)
+
+sess = tf.InteractiveSession()
+writer = tf.summary.FileWriter('./logdir', sess.graph)
+#merged = tf.merge_all_summaries()旧tensorflow
+##merged = tf.summary.merge_all()
+
+##run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+##run_metadata = tf.RunMetadata()
+
+#if tf.gfile.Exists('./logdir'):
+    #tf.gfile.DeleteRecursively('./logdir')
+#tf.gfile.MakeDirs(log_dir)
+
 if __name__ == '__main__':
-    sess = tf.InteractiveSession()
-    if tf.gfile.Exists('./logdir'):
-        tf.gfile.DeleteRecursively('./logdir')
-    writer = tf.summary.FileWriter('./logdir', sess.graph)
     if os.path.isfile(checkpoint_path + ".index"):
         saver.restore(sess, checkpoint_path)
     else:
@@ -198,6 +223,11 @@ if __name__ == '__main__':
         _, loss_val = sess.run([training_op, loss], feed_dict={
             X_state: X_state_val, X_action: X_action_val, y: y_val})
 
+        #summary = sess.run([merged], options=run_options, run_metadata=run_metadata)
+
+        #writer.add_run_metadata(run_metadata, 'step%d' % step)
+        #writer.add_summary(summary, step)
+
         # Regularly copy the online DQN to the target DQN
         if step % copy_steps == 0:
             copy_online_to_target.run()
@@ -205,3 +235,10 @@ if __name__ == '__main__':
         # And save regularly
         if step % save_steps == 0:
             saver.save(sess, checkpoint_path)
+"""
+        if step % metadata_steps == 0:
+            summary = sess.run([merged], feed_dict={
+                X_state: X_state_val, X_action: X_action_val, y: y_val}, options=run_options, run_metadata=run_metadata)
+            writer.add_summary(summary, i)
+            writer.add_run_metadata(run_metadata, 'step%d' % step)
+"""
