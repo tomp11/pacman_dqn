@@ -1,3 +1,4 @@
+#まだできてない
 import gym
 import matplotlib.pyplot as plt
 #from animation import plot_animation
