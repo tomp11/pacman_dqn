@@ -146,7 +146,7 @@ if __name__ == '__main__':
         if step >= n_steps:
             break
         iteration += 1
-        print("\rIteration {}\tTraining step {}/{} ({:.1f})%\tLoss {:5f}\tMean Max-Q {:5f}   ".format(
+        print("\rIter:{}/TrainStep:{}/{}({:.1f}%)/Loss:{:5f}/MeanMax-Q:{:5f}   ".format(
             iteration, step, n_steps, step * 100 / n_steps, loss_val, mean_max_q), end="")
         if done:
             obs = env.reset()
