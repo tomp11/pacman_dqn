@@ -3,3 +3,4 @@ models_of_board
 logdir
 __pycache__
 *.pyc
+pacman_seiya_models
