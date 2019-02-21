@@ -32,6 +32,8 @@ hidden_activation = tf.nn.relu
 n_outputs = env.action_space.n
 initializer = tf.variance_scaling_initializer()
 
+print(n_outputs)
+
 def q_network(X_state, name):
     prev_layer = X_state / 128.0
     with tf.variable_scope(name) as scope:
@@ -60,6 +62,13 @@ with tf.variable_scope("train"):
     X_action = tf.placeholder(tf.int32, shape=[None])
     y = tf.placeholder(tf.float32, shape=[None, 1])
     q_value = tf.reduce_sum(online_q_values * tf.one_hot(X_action, n_outputs), axis=1, keepdims=True)
+    # tf.reduce_sum()はテンソルの合計を出す
+    # reduce系は全部そう
+    # 軸を指定してそれぞれの合計を出したり、それの次元を保持するかを指定したりできる
+    # tf.onehot()はone_hot(indicies, depth)
+    # X_actionは0-8だが、それをonehotにする
+    # 7だったら[0,0,0,0,0,0,0,1,0]
+    # つまり行動したQ値を取り出している
     error = tf.abs(y - q_value)
     clipped_error = tf.clip_by_value(error, 0.0, 1.0)
     linear_error = 2 * (error - clipped_error)
@@ -118,9 +127,11 @@ def epsilon_greedy(q_values, step):
 #maxは要素を返す
 
 n_steps = 4000000
+#これはMaxstep
 training_start = 10000
 training_interval = 4
 save_steps = 1000
+#4*1000=4000でセーブするから一瞬止まる?
 copy_steps = 10000
 discount_rate = 0.99
 skip_start = 90

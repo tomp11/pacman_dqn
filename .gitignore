@@ -4,3 +4,4 @@ logdir
 __pycache__
 *.pyc
 pacman_seiya_models
+100_models
