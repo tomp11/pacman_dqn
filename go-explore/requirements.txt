@@ -16,7 +16,7 @@ glfw==1.7.0
 grpcio==1.18.0
 gym==0.10.9
 h5py==2.9.0
-horovod==0.15.2
+horovod==0.24.0
 idna==2.8
 imageio==2.4.1
 joblib==0.13.1
